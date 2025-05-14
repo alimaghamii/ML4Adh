@@ -93,6 +93,7 @@ elif figure== 9:
         mu_fixed = 0.04
         delta_l= np.log10(75)
 
+
 k_fixed = - 1  # remember that we put log10 of k in the model
 # alphaload_fixed = delta_l * mu_fixed * (np.pi**(2/3))
 alphaload_fixed = delta_l
