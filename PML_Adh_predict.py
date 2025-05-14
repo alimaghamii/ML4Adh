@@ -10,6 +10,7 @@ from matplotlib.patches import ConnectionPatch, Rectangle
 
 # Here, we import details from utilities
 from utilities import load_pb_data
+from utilities import file_path_RPML_5inputs
 from utilities import file_pathPB
 from utilities import file_PB
 from utilities import save_dir_PARPML_6inputs
@@ -93,12 +94,12 @@ elif figure== 9:
         mu_fixed = 0.04
         delta_l= np.log10(75)
 
-
 k_fixed = - 1  # remember that we put log10 of k in the model
 # alphaload_fixed = delta_l * mu_fixed * (np.pi**(2/3))
 alphaload_fixed = delta_l
 # Define the range of runload (unloading rate) and n values
 runload_values = np.linspace(-1.5, 10, 30)  # 100 points between -1 and 6
+# n_values = [0.2, 0.4, 0.6, 0.8, 1.6]  # Given n values
 n_values = [0.2, 0.6, 1.6]  # Given n values
 # n_values = np.log10(n_values)
 colors = ['red', 'blue', 'green', 'purple', '#E69F00']  # Define the colors
@@ -153,21 +154,64 @@ predictions = make_predictions_Phys_A(trained_model, runload_values, n_values, m
 
 # Plot predictions for each value of n
 for i, n in enumerate(n_values):
+    # plt.plot(10** runload_values, 10** predictions[n], label=f'n = {n}', color=colors[i], alpha=0.3,
+    #         lw=6)
     plt.scatter(10** runload_values, 10** predictions[n], label=f'n = {n}', color=colors[i], alpha=0.4,
              lw=5)
 ######################################################
 # Load the CSV file into a DataFrame
-# dataML = pd.read_csv(file_path_RPML_5inputs)
+dataML = pd.read_csv(file_path_RPML_5inputs)
 data_test_final = pd.read_csv(file_path_RPML_5inputs_test)
 # Call the utility function to process the columns.
 # It means we are making some changes in dimensions, please check utilities.py file
-# dataML = process_columns(dataML)
+dataML = process_columns(dataML)
 
-#filtered_data = dataML[(dataML['mu'] == mu_fixed) &
-#                       (dataML['k'] == k_fixed) &
-#                       (dataML['alphaload'] > alphaload_fixed) &
-#                       (dataML['alphaload'] < alphaload_fixed + 0.1)
-#]
+filtered_data = dataML[(dataML['mu'] == mu_fixed) &
+                       (dataML['k'] == k_fixed) &
+                       (dataML['alphaload'] > alphaload_fixed) &
+                       (dataML['alphaload'] < alphaload_fixed + 0.1)
+]
+
+# Check if filtered_data is not empty before plotting
+if not filtered_data.empty:
+    # plt.figure(figsize=(10, 6))  # Create a new figure for the plot
+
+    # Loop through unique values of 'n' in the filtered_data
+    for i, n_value in enumerate(n_values):
+        # Filter data for the current n_value
+        data_n = filtered_data[filtered_data['n'] == n_value]
+        # Ensure data is sorted in the order you want to keep the first occurrence
+        data_n_sorted = data_n.sort_values(by=['runload'])  # Optional sorting
+
+        # Drop duplicates based on 'runload', keeping only the first occurrence
+        data_n_unique = data_n_sorted.drop_duplicates(subset=['runload'], keep='first')
+
+        plt.scatter(10** data_n_unique['runload'], 10**data_n_unique['outputAmplification'], label=f'n = {n_value}', color='black', alpha=0.9, edgecolor='black', linewidth=0.9, s=50, marker='D')
+
+else:
+    print("No data found in the filtered dataset.")
+
+data_test_final = process_columns(data_test_final)
+
+filtered_data_test_final = data_test_final[(data_test_final['mu'] == mu_fixed) &
+                       (data_test_final['k'] == k_fixed) &
+                       (data_test_final['alphaload'] > alphaload_fixed) &
+                       (data_test_final['alphaload'] < alphaload_fixed + 0.2)
+]
+
+# Check if filtered_data is not empty before plotting
+if not filtered_data_test_final.empty:
+    # plt.figure(figsize=(10, 6))  # Create a new figure for the plot
+
+    # Loop through unique values of 'n' in the filtered_data
+    for i, n_value in enumerate(n_values):
+        # Filter data for the current n_value
+        data_n = filtered_data_test_final[filtered_data_test_final['n'] == n_value]
+
+        plt.scatter(10** data_n['runload'], 10**data_n['outputAmplification'], label=f'n = {n_value}', color=colors2[i],edgecolor='black', alpha=1, linewidth=1, s=120, marker='^')
+
+else:
+    print("No data found in the filtered dataset.")
 
 # Add a text arrow
 plt.annotate('$n= [0.2, 0.6, 1.6]$', xytext=(10 ** -1.95, 10 ** 0.9), xy=(10 ** 3, 10 ** 0.3),
@@ -218,12 +262,19 @@ fig = plt.figure(figsize=(15, 5))
 ax_main = fig.add_axes([0.07, 0.23, 0.5, 0.765])   # Main plot on the left
 ax_zoom = fig.add_axes([0.6, 0.3, 0.38, 0.5])  # Zoomed plot on the right
 
+# mu_values = [0.04, 0.1, 0.15, 0.3, 0.5, 1, 2, 3.24]
 mu_values = [0.05, 0.2, 0.8, 3.2]
 
+# colors = ['red', 'blue', 'green', 'purple', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF', '#32CD32',
+#     '#FFD700', '#8A2BE2', '#FF1493', '#00FF00']
 
 colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+# mu_values = [0.04, 0.5, 1]
 
+#alphaload_values= np.logspace(0.1, 2, 7)
 alphaload_values= np.log10 ([1 ,4 , 8, 16, 32, 64])
+# alphaload_values= np.log10 ([1,2 ,4,6 ,8, 12, 16, 24, 32, 48, 64, 75])
+# alphaload_values= np.linspace(1, 100, 7)
 
 k_fixed = -1 # remember that we put log10 of k in the model
 runload_fixed = 8
@@ -265,14 +316,39 @@ for i, mu in enumerate(mu_values):
     ax_main.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
              lw=5)
 
+filtered_data2 = dataML[(dataML['k'] == k_fixed) &
+                       (dataML['runload'] > runload_fixed-0.001) &
+                       (dataML['runload'] < runload_fixed+ 0.01) &
+                        (dataML['n'] == n_fixed)
+]
+
+# Check if filtered_data is not empty before plotting
+if not filtered_data2.empty:
+    # plt.figure(figsize=(10, 6))  # Create a new figure for the plot
+
+    # Loop through unique values of 'n' in the filtered_data
+    for i, mu_value in enumerate(mu_values):
+        # Filter data for the current n_value
+        data_mu = filtered_data2[filtered_data2['mu'] == mu_value]
+
+        ax_main.scatter(10** data_mu['alphaload'], 10** data_mu['outputAmplification'], label=f'mu = {mu_value}', color=colors[i], alpha=0.7, edgecolor='black', linewidth=0.9, s=70)
+
+else:
+    print("No data found in the filtered dataset.")
 
 ax_main.plot(10** alphaload_values, [10] * len(alphaload_values), color='dimgray',  lw=4, alpha=0.7, linestyle='--')
 
+#ax_main.xscale('log')
 ax_main.set_xscale('log')
 ax_main.set_yscale('log')
+#ax_main.yscale('log')
+# ax_main.xlabel(r'$\widehat{\delta}_l$')
 ax_main.set_xlabel(r'$\widehat{\delta}_l$')
 ax_main.set_ylabel(r'$\widehat{\Gamma}_{eff}$')
+#ax_main.ylabel(r'$\widehat{\Gamma}_{eff}$')
+# ax_main.xlim([1,75])
 ax_main.set_xlim([1, 64])  # <-- Your desired x-limits for the main figure
+#ax_main.yticks([2, 3, 4, 6, 10], labels=[" "," "," "," ","10"])  # Only show the tick at y=10
 # Add a text arrow
 ax_main.set_yticks([2, 3, 4, 6, 10])
 ax_main.set_yticklabels([" "," "," "," ","10"])
@@ -309,6 +385,7 @@ ax_main.text(10**1.4, 2, f'$n={n_fixed}$', fontsize=font_size, color='black')
 lable = label= f'$\\widehat{{r}}_u=10^{runload_fixed}$'
 ax_main.text(10**1.4, 2.5, label, fontsize=font_size)
 alphabet= 'a'
+# ax_main.text(54, 2, f'({alphabet})', fontsize=font_size)
 fig.text(0.74, 0.1, f'({alphabet})', fontsize=font_size)
 
 # -------------------------------------------------------------
@@ -326,6 +403,10 @@ for i, mu in enumerate(mu_values):
 
     ax_zoom.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
              lw=5)
+    #data_mu = filtered_data_test_final[filtered_data_test_final['mu'] == mu_value]
+
+    # ax_zoom.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=120, marker='^')
+
 
 filtered_data_test_final = data_test_final[(data_test_final['k'] == k_fixed) &
                        (data_test_final['runload'] > runload_fixed-0.001) &
@@ -334,6 +415,7 @@ filtered_data_test_final = data_test_final[(data_test_final['k'] == k_fixed) &
 
 # Check if filtered_data is not empty before plotting
 if not filtered_data_test_final.empty:
+    # plt.figure(figsize=(10, 6))  # Create a new figure for the plot
 
     # Loop through unique values of 'n' in the filtered_data
     for i, mu_value in enumerate(mu_values):
@@ -352,6 +434,7 @@ ax_zoom.set_ylim([y_min, y_max])
 ax_zoom.set_xscale('log')
 ax_zoom.set_yscale('log')
 #ax_main.yscale('log')
+# ax_zoom.set_title('Zoomed-In View')
 ax_zoom.set_yticks([7, 8, 9, 10, 40/3])
 ax_zoom.set_yticklabels([
     " ",
@@ -370,6 +453,8 @@ ax_zoom.text(15, 40/3+0.1, 'DMT-like limit', fontsize=22)
 ax_zoom.plot(10** alphaload_values, [10] * len(alphaload_values), color='brown',  lw=3, alpha=0.5, linestyle='-.')
 ax_zoom.plot(10** alphaload_values, [20/1.5] * len(alphaload_values),color='black', lw=3, alpha=1.0, linestyle='-.')
 # Example of custom ticks for the zoomed-in (linear) axis
+#ax_zoom.set_xticks([2, 3, 4])
+#ax_zoom.set_xticklabels(['2', '3', '4'])
 ax_zoom.annotate('$\\mu= [0.05, 0.2, 0.8, 3.2]$',
              xy=(52, 8.5),          # start point of the arrow (x, y)
              xytext=(22, 15),      # text point (x, y)
@@ -444,10 +529,14 @@ plt.rcParams.update({
 })
 
 
+# mu_values = [0.04, 0.1, 0.15, 0.3, 0.5, 1, 2, 3.24]
 mu_values = [0.05, 0.2, 0.8, 3.2]
 
+# colors = ['red', 'blue', 'green', 'purple', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF', '#32CD32',
+#     '#FFD700', '#8A2BE2', '#FF1493', '#00FF00']
 
 colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+# mu_values = [0.04, 0.5, 1]
 
 alphaload_values= np.linspace(1, 100, 7)
 alphaload_values= np.log10 ([1, 4, 8, 16, 32, 64, 100])
@@ -490,9 +579,18 @@ for i, mu in enumerate(mu_values):
     plt.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
              lw=5)
 
+filtered_data2 = dataML[(dataML['k'] == k_fixed) &
+                       (dataML['runload'] > runload_fixed-0.001) &
+                       (dataML['runload'] < runload_fixed+ 0.01)
+]
 
 plt.plot(10** alphaload_values, [8] * len(alphaload_values), color='dimgray',  lw=4, alpha=0.8, linestyle='--')
 
+# plot(alphaload_values, [10] * len(alphaload_values), color='brown',  lw=2, alpha=0.5, linestyle='-.')
+# plt.plot(alphaload_values, [20/1.5] * len(alphaload_values),color='black', lw=2, alpha=1.0, linestyle='-.')
+# note: think about the scale of outputamplification.
+# Set the y-axis tick to only show y = 10
+# plt.yticks([10], labels=["10"])  # Only the desired value will have a label
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel(r'$\widehat{\delta}_l$')
@@ -500,6 +598,7 @@ plt.ylabel(r'$\widehat{\Gamma}_{eff}$')
 plt.xlim([1,64])
 plt.yticks([2, 3, 4, 6, 10], labels=[" "," "," "," ","10"])  # Only show the tick at y=10
 # Add a text arrow
+# plt.xticks([2, 3, 4, 6, 10], labels=[" "," "," "," ","10"])  # Only show the tick at y=10
 plt.ylim([1,10])
 # The desired tick locations
 ticks = [1, 10, 64]
@@ -546,9 +645,14 @@ plt.show()
 #################################################### mu effect figures #################################################
 # Set fixed values for runload and k for mu study
 
+# mu_values = [0.04, 0.1, 0.15, 0.3, 0.5, 1, 2, 3.24]
 mu_values = [0.05, 0.2, 0.8, 3.2]
 
+# colors = ['red', 'blue', 'green', 'purple', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF', '#32CD32',
+#     '#FFD700', '#8A2BE2', '#FF1493', '#00FF00']
+
 colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+# mu_values = [0.04, 0.5, 1]
 
 alphaload_values= np.linspace(1, 1000, 50)
 alphaload_values= np.log10 ([1, 4, 8, 16, 32, 64, 100])
@@ -591,10 +695,18 @@ for i, mu in enumerate(mu_values):
     plt.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
              lw=5)
 
+filtered_data2 = dataML[(dataML['k'] == k_fixed) &
+                       (dataML['runload'] > runload_fixed-0.001) &
+                       (dataML['runload'] < runload_fixed+ 0.01)
+]
 
 plt.plot(10** alphaload_values, [2.4] * len(alphaload_values), color='dimgray',  lw=4, alpha=0.7, linestyle='--')
 
+# plt.plot(alphaload_values, [10] * len(alphaload_values), color='brown',  lw=2, alpha=0.5, linestyle='-.')
+# plt.plot(alphaload_values, [20/1.5] * len(alphaload_values),color='black', lw=2, alpha=1.0, linestyle='-.')
 # note: think about the scale of outputamplification.
+# Set the y-axis tick to only show y = 10
+# plt.yticks([10], labels=["10"])  # Only the desired value will have a label
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel(r'$\widehat{\delta}_l$')

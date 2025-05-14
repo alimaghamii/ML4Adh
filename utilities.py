@@ -17,6 +17,8 @@ save_dir_PARPML_6inputs_W= 'PML_saved_W'
 # Load the CSV file into a DataFrame (input data)
 file_path_RPML_5inputs = 'Data_Files/comb_1to9.csv'  # Replace with the path to your CSV file
 file_path_PARPML_6inputs= 'Data_Files/aug_comb_1to9.csv'  # This data is obtained through Data_augmentation.py in Data_study folder
+
+
 file_path_RPML_5inputs_test = 'Data_Files/fig_8to11_test.csv'
 
 file_path_RPML_5inputs_W = 'Data_Files/comb_1to9_W.csv'  # Replace with the path to your CSV file
@@ -48,20 +50,28 @@ latex_table_template = r"""
 def process_columns(data):
     # Check and process 'runload' column if present
     if 'runload' in data.columns and 'mu' in data.columns:
+       # data['runload'] = data['runload'] / (data['mu'] * np.pi**(2/3))
         data['runload'] = np.log10(np.abs(data['runload']))
 
     if 'alphaload' in data.columns and 'mu' in data.columns:
-       data['alphaload'] = np.log10(data['alphaload']) 
+       data['alphaload'] = np.log10(data['alphaload']) # / (data['mu'] * np.pi**(2/3))
 
     # Check and process 'outputAmplification' column if present
     if 'outputAmplification' in data.columns:
         data['outputAmplification'] = np.log10(np.abs(data['outputAmplification']))
     if 'workofSepration' in data.columns:
         data['workofSepration'] = np.log10(np.abs(data['workofSepration']))
+        # condition = data['outputAmplification'] > (1 / data['k'])
+        # data.loc[condition, 'outputAmplification'] = 1 / data.loc[condition, 'k']
     # Check and process 'k' column if present
     if 'k' in data.columns:
         data['k'] = np.log10(np.abs(data['k']))
 
+   # if 'n' in data.columns:
+   #     data['n'] = np.log10(np.abs(data['n']))
+
+    #if 'PB' in data.columns:
+    #    data['PB'] = np.log10(np.abs(data['PB']))
 
     return data
 #######################################################################################################################
@@ -357,6 +367,8 @@ def process_columns_Seq(data):
     # Check and process 'outputAmplification' column if present
     if 'outputAmplification' in data.columns:
         data['outputAmplification'] = np.log10(np.abs(data['outputAmplification']))
+        # condition = data['outputAmplification'] > (1 / data['k'])
+        # data.loc[condition, 'outputAmplification'] = 1 / data.loc[condition, 'k']
     # Check and process 'k' column if present
     if 'k' in data.columns:
         data['k'] = np.log10(np.abs(data['k']))

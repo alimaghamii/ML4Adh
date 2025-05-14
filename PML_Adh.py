@@ -1,0 +1,112 @@
+import pandas as pd
+from sklearn.model_selection import KFold, train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.neural_network import MLPRegressor
+import numpy as np
+from matplotlib import pyplot as plt
+from cpsme.export_figure import export_figure
+import joblib
+import os
+
+# Here, we import details from utilities
+from utilities import latex_table_template
+from utilities import process_columns
+from utilities import file_path_PARPML_6inputs
+from utilities import save_dir_PARPML_6inputs
+from utilities import plot_filtered_predictions_vs_ground_truth
+from utilities import append_model_to_file
+from utilities import get_trainable_parameters
+
+rand_st= 40
+
+
+# Ensure the directory exists (optional, if you want to create it if it doesn't exist)
+os.makedirs(save_dir_PARPML_6inputs, exist_ok=True)
+
+# Load the CSV file into a DataFrame
+data = pd.read_csv(file_path_PARPML_6inputs)
+
+# Call the utility function to process the columns.
+# It means we are making some changes in dimensions, please check utilities.py file
+data = process_columns(data)
+
+# Load your dataset
+input_columns = ['runload', 'alphaload', 'mu', 'k', 'n', 'PB']
+output_column = 'outputAmplification'
+
+X = data[input_columns]
+y = data[output_column]
+
+
+# Train-test split (80% training, 20% testing)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=rand_st)
+
+# Define models
+models = {
+    "Linear Regression": LinearRegression(),
+    "Regression Tree": DecisionTreeRegressor(random_state=rand_st),
+    "Random Forest": RandomForestRegressor(random_state=rand_st),
+    "XGBoost": XGBRegressor(random_state=rand_st),
+    "Neural Network": MLPRegressor(hidden_layer_sizes=(100, 50), activation='relu', solver='adam', random_state=rand_st,
+                                   max_iter=1000)
+}
+
+# K-Fold setup
+kf = KFold(n_splits=5, shuffle=True, random_state=rand_st)
+
+# Variables to store results for LaTeX table
+latex_rows = []
+
+# Iterate over each model
+for model_name, model in models.items():
+    mse_folds = []
+    r2_folds = []
+
+    # K-Fold Cross-validation
+    for train_index, val_index in kf.split(X):
+        X_train_fold, X_val_fold = X.iloc[train_index], X.iloc[val_index]
+        y_train_fold, y_val_fold = y.iloc[train_index], y.iloc[val_index]
+
+        # Train the model
+        model.fit(X_train_fold, y_train_fold)
+
+        # Predict on validation fold
+        y_val_pred = model.predict(X_val_fold)
+
+        # Compute MSE and R² for each fold
+        mse_folds.append(mean_squared_error(y_val_fold, y_val_pred))
+        r2_folds.append(r2_score(y_val_fold, y_val_pred))
+
+    # Final evaluation on test data
+    model.fit(X_train, y_train)
+    y_test_pred = model.predict(X_test)
+
+    mse_test = mean_squared_error(y_test, y_test_pred)
+    r2_test = r2_score(y_test, y_test_pred)
+
+    # Assuming you have the variables `model`, `X_train`, `y_train`, `y_test`, `y_test_pred`, and `model_name`
+    # Define the range you want to filter by, for example: y_range =  (0, 1.25) or y_range = None
+    y_range = (0, 1.0)
+    # y_range = None
+    plot_filtered_predictions_vs_ground_truth(model, X_train, y_train, y_test, y_test_pred, model_name, export_figure,
+                                              y_range=y_range, save_dir=save_dir_PARPML_6inputs, model_specific_name='PARPML')
+
+    # Compute averages
+    mse_var = np.std(mse_folds)
+    mse_avg = np.mean(mse_folds)
+    r2_var = np.std(r2_folds)
+    r2_avg = np.mean(r2_folds)
+
+    # append_model_to_file(model_name, 28.5, 1.6, 0.660, 0.023, 0.0305, 0.7)
+    num_param = get_trainable_parameters(model_name, model, X_train)
+    append_model_to_file(model_name,num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test,save_dir_PARPML_6inputs, 'RPML_model_comparison_table.txt')
+
+# Save each trained model
+for model_name, model in models.items():
+    save_path = os.path.join(save_dir_PARPML_6inputs, f"{model_name.replace(' ', '_')}_model.pkl")
+    joblib.dump(model, save_path)
+    print(f"{model_name} saved at {save_path}")
