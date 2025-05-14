@@ -15,7 +15,7 @@ save_dir_RPML_5inputs_W= 'ML_saved_W'
 save_dir_PARPML_6inputs_W= 'PML_saved_W'
 
 # Load the CSV file into a DataFrame (input data)
-file_path_RPML_5inputs = 'Data_Files/comb_1to9.csv'  # Replace with the path to your CSV file
+file_path_RPML_5inputs = 'Data_Files/aug_comb_1to9.csv'  # Replace with the path to your CSV file
 file_path_PARPML_6inputs= 'Data_Files/aug_comb_1to9.csv'  # This data is obtained through Data_augmentation.py in Data_study folder
 
 
