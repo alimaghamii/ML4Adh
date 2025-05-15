@@ -46,7 +46,7 @@ The Python codes are written by Ali Maghami, a PhD researcher at **Politecnico d
 
 ## File Structure
 ```
-📂 AI4Adhesion
+📂 ML4Adhesion
 │── 📄 README.md                 # Project documentation
 │── 📄 requirements.txt          # Dependencies
 │── 📄 ML_Adh.py                 # Data-driven model training for pull-off force
