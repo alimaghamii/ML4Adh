@@ -67,7 +67,7 @@ C2 = 3.24 * np.pi ** (2 / 3)
 # --------------------------------------------------------------------------
 # Load and clean the data
 # --------------------------------------------------------------------------
-df = pd.read_csv("Data_Files/comb_1to9.csv")
+df = pd.read_csv("Data_Files/comb_1to9_W.csv")
 
 # Ensure runload, n, k are numeric and drop obviously bad rows
 for col in ["runload", "n", "k"]:
@@ -97,6 +97,6 @@ for i, row in df.iterrows():
 # --------------------------------------------------------------------------
 df_clean = pd.DataFrame(valid_rows)
 df_clean.drop(columns=["nu_hat"], inplace=True)
-df_clean.to_csv("Data_Files/aug_comb_1to9.csv", index=False)
+df_clean.to_csv("Data_Files/aug_comb_1to9_W.csv", index=False)
 
 print(f"✅ Done — Saved {len(df_clean)} valid rows to 'aug_comb_1to9.csv'.")

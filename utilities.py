@@ -24,6 +24,10 @@ file_path_RPML_5inputs_test = 'Data_Files/fig_8to11_test.csv'
 file_path_RPML_5inputs_W = 'Data_Files/comb_1to9_W.csv'  # Replace with the path to your CSV file
 file_path_PARPML_6inputs_W= 'Data_Files/aug_comb_1to9_W.csv'  # This data is obtained through Data_augmentation.py in Data_study folder
 
+file_path_RPML_5inputs_W = 'Data_Files/aug_comb_1to9.csv'  # Replace with the path to your CSV file
+file_path_PARPML_6inputs_W= 'Data_Files/aug_comb_1to9.csv'  # This data is obtained through Data_augmentation.py in Data_study folder
+
+
 # Load the PB data
 file_pathPB = 'Data_Files/PB_vs_r_ver2.csv'
 file_PB='Data_Files/PB_data.csv'
