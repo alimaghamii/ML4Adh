@@ -73,8 +73,8 @@ colors = ['red', 'blue', 'green', 'purple', '#E69F00']  # Define the colors
 colors2 = ['#8B0000', '#00008B', '#006400', '#F0E442', '#0072B2']  # Colorblind-friendly options
 
 # trained_model = models['XGBoost']  # Retrieve trained XGBoost model
-trained_model = loaded_models.get('XGBoost')
-# trained_model = loaded_models.get('Neural Network')
+# trained_model = loaded_models.get('XGBoost')
+trained_model = loaded_models.get('Random Forest')
 
 dataPB = load_pb_data(file_pathPB)
 

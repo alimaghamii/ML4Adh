@@ -52,7 +52,7 @@ def gamma_eff_PB(n, k, nu, tol=1e-10, max_iter=200):
 # --------------------------------------------------------------------------
 # Settings and parameters
 # --------------------------------------------------------------------------
-alphabet = 'a'
+alphabet = 'b'
 
 if alphabet == 'a':
     n_fixed = 0.6
@@ -97,6 +97,9 @@ plt.rcParams.update({
 })
 
 colors = ['#D10070', '#007FFF', '#009970', '#FF8C00', '#8B00FF']
+colors = ['#8B0000', '#00008B', '#006400', '#F0E442', '#0072B2']  # Colorblind-friendly options
+colors = ['purple', 'blue', 'red', 'green', 'darkorange']  # Updated colors with red replaced by purple
+
 fig = plt.figure()
 
 # --------------------------------------------------------------------------
@@ -142,8 +145,10 @@ for i, k in enumerate(k_values):
         r_u_sampled = 10 ** ml_sampled_df["runload"]
 
         # Scatter ML predictions
-        plt.scatter(r_u_sampled, 10 ** gamma_ml_sampled, label=f'$k={k:.3f}$ (ML)', color=colors[i],
-                    s=60, edgecolors='black', linewidth=0.8, zorder=3)
+        plt.scatter(r_u_sampled, 10 ** gamma_ml_sampled, label=f'$k={k:.3f}$ (ML)', color=colors[i]
+                    , lw=5, alpha=0.4)
+
+# plt.scatter(r_u, w_po_predicted, label=r'ML Prediction', color='blue', alpha=0.4, lw=2, s=90)
 
 # --------------------------------------------------------------------------
 # Finalize and save plot

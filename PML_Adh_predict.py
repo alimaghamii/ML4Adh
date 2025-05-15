@@ -56,43 +56,51 @@ for model_name in os.listdir(save_dir):
 print(f"Total models loaded: {len(loaded_models)}")
 
 # Set fixed values for mu and k
-figure = 9 # specify the figure that you want to creat
-# 7, 8, or 9
-alphabet = 'c'
+figure = 8 # specify the figure that you want to creat
+# 6, 7, or 8
+alphabet = 'd'
 
-if figure== 7:
-    if alphabet == 'b':
-        mu_fixed =3.24
-      #  delta_l =10.5*3.24*np.pi**(2/3)
-        delta_l =np.log10(73)
+if figure== 6: 
+    alphabet = 'b'
+    mu_fixed =3.24
+    delta_l0 = 73
+    delta_l =np.log10(delta_l0)
+
+elif figure== 7:
+    if alphabet=='a':
+        mu_fixed = 3.0
+        delta_l0 = 60
+        delta_l = np.log10(delta_l0)
+    elif alphabet == 'b':
+        mu_fixed = 3.0
+        delta_l0 = 30
+        delta_l = np.log10(delta_l0)
+    elif alphabet == 'c':
+        mu_fixed = 3.0
+        delta_l0 = 15
+        delta_l = np.log10(delta_l0)
+    elif alphabet == 'd':
+        mu_fixed = 3.0
+        delta_l0 = 7.5
+        delta_l = np.log10(delta_l0)
 
 elif figure== 8:
     if alphabet=='a':
-        mu_fixed = 3.0
-        delta_l= np.log10(60)
-    elif alphabet == 'b':
-        mu_fixed = 3.0
-        delta_l= np.log10(30)
-    elif alphabet == 'c':
-        mu_fixed = 3.0
-        delta_l = np.log10(15)
-    elif alphabet == 'd':
-        mu_fixed = 3.0
-        delta_l = np.log10(7.5)
-
-elif figure== 9:
-    if alphabet=='a':
         mu_fixed = 2.56
-        delta_l= np.log10(75)
+        delta_l0 = 75
+        delta_l = np.log10(delta_l0)
     elif alphabet == 'b':
-        mu_fixed = 0.64
-        delta_l= np.log10(75)
+        mu_fixed = 0.16
+        delta_l0 = 75
+        delta_l= np.log10(delta_l0)
     elif alphabet=='c':
         mu_fixed = 0.16
-        delta_l= np.log10(75)
+        delta_l0 = 15
+        delta_l = np.log10(delta_l0)
     elif alphabet == 'd':
-        mu_fixed = 0.04
-        delta_l= np.log10(75)
+        mu_fixed = 0.16
+        delta_l0 = 7.5
+        delta_l = np.log10(delta_l0)
 
 k_fixed = - 1  # remember that we put log10 of k in the model
 # alphaload_fixed = delta_l * mu_fixed * (np.pi**(2/3))
@@ -108,7 +116,8 @@ colors2 = ['#D10070', '#0033CC', '#008F11']
 colors2 = ['#D10070', '#007FFF', '#009970']
 
 # trained_model = models['XGBoost']  # Retrieve trained XGBoost model
-trained_model = loaded_models.get('XGBoost')
+# trained_model = loaded_models.get('XGBoost')
+trained_model = loaded_models.get('Random Forest')
 # trained_model = loaded_models.get('Neural Network')
 
 dataPB = pd.read_csv(file_pathPB)
@@ -148,6 +157,8 @@ def make_predictions_Phys_A(trained_model, runload_values, n_values, mu_fixed, k
 
 for i, n_col in enumerate(n_columns):
     plt.plot(10** r_ml, 10** filtered_dataPB[n_col], label=n_col, color=colors[i], lw=2, alpha=0.4, linestyle='--')
+
+
 
 # Make predictions. It gets the trained model and 5 inputs
 predictions = make_predictions_Phys_A(trained_model, runload_values, n_values, mu_fixed, k_fixed, alphaload_fixed)
@@ -234,7 +245,7 @@ plt.ylabel(r'$\widehat{\Gamma}_{eff}$')
 plt.xscale('log')
 plt.yscale('log')
 plt.tight_layout()
-filename = f"PARPML_effective_surf_ener_vs_r_mu_{mu_fixed}_d_{delta_l}.png"
+filename = f"PARPML_effective_surf_ener_vs_r_mu_{mu_fixed}_d_{delta_l0}.png"
 plt.savefig(f"{save_dir}/{filename}")
 plt.show()
 
@@ -263,16 +274,22 @@ ax_main = fig.add_axes([0.07, 0.23, 0.5, 0.765])   # Main plot on the left
 ax_zoom = fig.add_axes([0.6, 0.3, 0.38, 0.5])  # Zoomed plot on the right
 
 # mu_values = [0.04, 0.1, 0.15, 0.3, 0.5, 1, 2, 3.24]
-mu_values = [0.05, 0.2, 0.8, 3.2]
+mu_values = [0.2, 0.8, 3.2]
 
 # colors = ['red', 'blue', 'green', 'purple', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF', '#32CD32',
 #     '#FFD700', '#8A2BE2', '#FF1493', '#00FF00']
 
-colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+# colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+colors = ['red',  'blue', 'green', 'red', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+
 # mu_values = [0.04, 0.5, 1]
 
 #alphaload_values= np.logspace(0.1, 2, 7)
 alphaload_values= np.log10 ([1 ,4 , 8, 16, 32, 64])
+logvalues = np.logspace(0, np.log10(64), 20)
+alphaload_values= np.log10 (logvalues)
+
+
 # alphaload_values= np.log10 ([1,2 ,4,6 ,8, 12, 16, 24, 32, 48, 64, 75])
 # alphaload_values= np.linspace(1, 100, 7)
 
@@ -310,11 +327,11 @@ predictions = make_predictions_Phys_A2(trained_model, runload_fixed, n_fixed, mu
 
 # Plot predictions for each value of n
 for i, mu in enumerate(mu_values):
-    ax_main.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
-             lw=6)
+   # ax_main.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
+   #          lw=6)
 
-    ax_main.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
-             lw=5)
+    ax_main.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.6,
+             lw=8)
 
 filtered_data2 = dataML[(dataML['k'] == k_fixed) &
                        (dataML['runload'] > runload_fixed-0.001) &
@@ -336,7 +353,8 @@ if not filtered_data2.empty:
 else:
     print("No data found in the filtered dataset.")
 
-ax_main.plot(10** alphaload_values, [10] * len(alphaload_values), color='dimgray',  lw=4, alpha=0.7, linestyle='--')
+ax_main.plot(10** alphaload_values, [10] * len(alphaload_values), color='dimgray', lw=4, alpha=0.7, linestyle='--')
+ax_main.text(1.1, 10.3, 'XPB', fontsize=font_size, color='black')  # Add text at the top-left corner of the ax_main figure
 
 #ax_main.xscale('log')
 ax_main.set_xscale('log')
@@ -376,7 +394,7 @@ else:
     print("No data found in the filtered dataset.")
 
 
-ax_main.annotate('$\\mu= [0.05, 0.2, 0.8, 3.2]$',
+ax_main.annotate('$\\mu= [0.2, 0.8, 3.2]$',
              xy=(5, 3),          # start point of the arrow (x, y)
              xytext=(1.1, 6.5),      # text point (x, y)
              arrowprops=dict(facecolor='black', arrowstyle='<-'),
@@ -398,11 +416,11 @@ y_min, y_max = 7, 18
 # Plot the same curve on the zoomed-in axes, focusing on the narrower range
 # ax_zoom.plot(x, y, color='blue', linewidth=2)
 for i, mu in enumerate(mu_values):
-    ax_zoom.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
-             lw=6)
+    # ax_zoom.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
+    #          lw=6)
 
-    ax_zoom.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
-             lw=5)
+    ax_zoom.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.6,
+             lw=8)
     #data_mu = filtered_data_test_final[filtered_data_test_final['mu'] == mu_value]
 
     # ax_zoom.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=120, marker='^')
@@ -455,7 +473,7 @@ ax_zoom.plot(10** alphaload_values, [20/1.5] * len(alphaload_values),color='blac
 # Example of custom ticks for the zoomed-in (linear) axis
 #ax_zoom.set_xticks([2, 3, 4])
 #ax_zoom.set_xticklabels(['2', '3', '4'])
-ax_zoom.annotate('$\\mu= [0.05, 0.2, 0.8, 3.2]$',
+ax_zoom.annotate('$\\mu= [0.2, 0.8, 3.2]$',
              xy=(52, 8.5),          # start point of the arrow (x, y)
              xytext=(22, 15),      # text point (x, y)
              arrowprops=dict(facecolor='black', arrowstyle='->'),
@@ -530,16 +548,19 @@ plt.rcParams.update({
 
 
 # mu_values = [0.04, 0.1, 0.15, 0.3, 0.5, 1, 2, 3.24]
-mu_values = [0.05, 0.2, 0.8, 3.2]
+mu_values = [0.2, 0.8, 3.2]
 
 # colors = ['red', 'blue', 'green', 'purple', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF', '#32CD32',
 #     '#FFD700', '#8A2BE2', '#FF1493', '#00FF00']
 
-colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+# colors = ['purple',  'blue', 'green', 'red', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
 # mu_values = [0.04, 0.5, 1]
 
 alphaload_values= np.linspace(1, 100, 7)
 alphaload_values= np.log10 ([1, 4, 8, 16, 32, 64, 100])
+logvalues = np.logspace(0, np.log10(64), 20)
+alphaload_values= np.log10 (logvalues)
+
 
 k_fixed = -1 # remember that we put log10 of k in the model
 runload_fixed = 3
@@ -574,10 +595,10 @@ predictions = make_predictions_Phys_A2(trained_model, runload_fixed, n_fixed, mu
 
 # Plot predictions for each value of mu
 for i, mu in enumerate(mu_values):
-    plt.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
-             lw=6)
-    plt.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
-             lw=5)
+    # plt.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
+    #          lw=6)
+    plt.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.6,
+             lw=8)
 
 filtered_data2 = dataML[(dataML['k'] == k_fixed) &
                        (dataML['runload'] > runload_fixed-0.001) &
@@ -585,6 +606,7 @@ filtered_data2 = dataML[(dataML['k'] == k_fixed) &
 ]
 
 plt.plot(10** alphaload_values, [8] * len(alphaload_values), color='dimgray',  lw=4, alpha=0.8, linestyle='--')
+plt.text(1.1, 8.3, 'XPB', fontsize=font_size, color='black')  # Add text at the top-left corner of the figure
 
 # plot(alphaload_values, [10] * len(alphaload_values), color='brown',  lw=2, alpha=0.5, linestyle='-.')
 # plt.plot(alphaload_values, [20/1.5] * len(alphaload_values),color='black', lw=2, alpha=1.0, linestyle='-.')
@@ -626,7 +648,7 @@ else:
     print("No data found in the filtered dataset.")
 
 
-plt.annotate('$\\mu= [0.05, 0.2, 0.8, 3.2]$',
+plt.annotate('$\\mu= [0.2, 0.8, 3.2]$',
              xy=(5, 3),          # start point of the arrow (x, y)
              xytext=(1.1, 6.5),      # text point (x, y)
              arrowprops=dict(facecolor='black', arrowstyle='<-'),
@@ -646,16 +668,19 @@ plt.show()
 # Set fixed values for runload and k for mu study
 
 # mu_values = [0.04, 0.1, 0.15, 0.3, 0.5, 1, 2, 3.24]
-mu_values = [0.05, 0.2, 0.8, 3.2]
+mu_values = [0.2, 0.8, 3.2]
 
 # colors = ['red', 'blue', 'green', 'purple', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF', '#32CD32',
 #     '#FFD700', '#8A2BE2', '#FF1493', '#00FF00']
 
-colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
+# colors = ['red', 'blue', 'green', 'darkorange', '#E69F00',  '#FF4500', '#00CED1', '#1E90FF']
 # mu_values = [0.04, 0.5, 1]
 
 alphaload_values= np.linspace(1, 1000, 50)
 alphaload_values= np.log10 ([1, 4, 8, 16, 32, 64, 100])
+logvalues = np.logspace(0, np.log10(64), 20)
+alphaload_values= np.log10 (logvalues)
+
 
 k_fixed = -1 # remember that we put log10 of k in the model
 runload_fixed = 1
@@ -690,10 +715,10 @@ predictions = make_predictions_Phys_A2(trained_model, runload_fixed, n_fixed, mu
 
 # Plot predictions for each value of n
 for i, mu in enumerate(mu_values):
-    plt.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
-             lw=6)
-    plt.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.8,
-             lw=5)
+    #plt.plot(10** alphaload_values, 10** predictions[mu],color=colors[i], label=f'n = {n}', alpha=0.4,
+    #         lw=6)
+    plt.scatter(10** alphaload_values, 10** predictions[mu], label=f'n = {n}', color=colors[i], alpha=0.6,
+             lw=8)
 
 filtered_data2 = dataML[(dataML['k'] == k_fixed) &
                        (dataML['runload'] > runload_fixed-0.001) &
@@ -701,6 +726,7 @@ filtered_data2 = dataML[(dataML['k'] == k_fixed) &
 ]
 
 plt.plot(10** alphaload_values, [2.4] * len(alphaload_values), color='dimgray',  lw=4, alpha=0.7, linestyle='--')
+plt.text(1.1, 2.5, 'XPB', fontsize=font_size, color='black')  # Add text at the top-left corner of the figure
 
 # plt.plot(alphaload_values, [10] * len(alphaload_values), color='brown',  lw=2, alpha=0.5, linestyle='-.')
 # plt.plot(alphaload_values, [20/1.5] * len(alphaload_values),color='black', lw=2, alpha=1.0, linestyle='-.')
@@ -736,9 +762,9 @@ else:
     print("No data found in the filtered dataset.")
 
 
-plt.annotate('$\\mu= [0.05, 0.2, 0.8, 3.2]$',
-             xy=(5, 1.7),          # start point of the arrow (x, y)
-             xytext=(1.1, 3),      # text point (x, y)
+plt.annotate('$\\mu= [0.2, 0.8, 3.2]$',
+             xy=(10, 1.7),          # start point of the arrow (x, y)
+             xytext=(3, 3),      # text point (x, y)
              arrowprops=dict(facecolor='black', arrowstyle='<-'),
              fontsize=font_size)
 plt.text(10**1.4, 4, f'$n={n_fixed}$', fontsize=font_size, color='black')

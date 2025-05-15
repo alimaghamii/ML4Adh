@@ -54,8 +54,7 @@ for model_name in os.listdir(save_dir):
 print(f"Total models loaded: {len(loaded_models)}")
 
 # trained_model = models['XGBoost']  # Retrieve trained XGBoost model
-trained_model = loaded_models.get('XGBoost')
-# trained_model = loaded_models.get('Neural Network')
+trained_model = loaded_models.get('Random Forest')
 
 dataPB = pd.read_csv(file_pathPB)
 
@@ -261,7 +260,7 @@ plt.show()
 #########################################################################################################################
 # Set fixed values for mu and k for fig 8, 9 and 10
 figure= 11
-alphabet= 'a' # it will be written on the figure
+alphabet= 'b' # it will be written on the figure
 
 if alphabet == 'a':
     n_fixed = 1.6
@@ -415,11 +414,9 @@ k_fixed = -1
 alphaload_fixed = delta_l  # assuming this is the same for both n values
 
 # Eq. (E.8) values from the table
-wpo_up_06 = [5.3871, 5.6598, 9.0574, 37.1203]
 wpo_up_16 = [5.3871, 5.3871, 8.7574, 37.1203]
 
 # Storage for ML predictions
-wpo_ml_06 = []
 wpo_ml_16 = []
 
 # Predict for n = 0.6
