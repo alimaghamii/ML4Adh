@@ -58,7 +58,7 @@ print(f"Total models loaded: {len(loaded_models)}")
 # Set fixed values for mu and k
 figure = 8 # specify the figure that you want to creat
 # 6, 7, or 8
-alphabet = 'd'
+alphabet = 'c'
 
 if figure== 6: 
     alphabet = 'b'
@@ -348,7 +348,7 @@ if not filtered_data2.empty:
         # Filter data for the current n_value
         data_mu = filtered_data2[filtered_data2['mu'] == mu_value]
 
-        ax_main.scatter(10** data_mu['alphaload'], 10** data_mu['outputAmplification'], label=f'mu = {mu_value}', color=colors[i], alpha=0.7, edgecolor='black', linewidth=0.9, s=70)
+        ax_main.scatter(10** data_mu['alphaload'], 10** data_mu['outputAmplification'], label=f'mu = {mu_value}', color=colors[i], alpha=0.7, edgecolor='black', linewidth=0.9, s=180)
 
 else:
     print("No data found in the filtered dataset.")
@@ -388,7 +388,7 @@ if not filtered_data_test_final.empty:
         # Filter data for the current n_value
         data_mu = filtered_data_test_final[filtered_data_test_final['mu'] == mu_value]
 
-        ax_main.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=176, marker='^')
+        ax_main.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=220, marker='^')
 
 else:
     print("No data found in the filtered dataset.")
@@ -440,7 +440,7 @@ if not filtered_data_test_final.empty:
         # Filter data for the current n_value
         data_mu = filtered_data_test_final[filtered_data_test_final['mu'] == mu_value]
 
-        ax_zoom.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=176, marker='^')
+        ax_zoom.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=220, marker='^')
 
 else:
     print("No data found in the filtered dataset.")
@@ -642,7 +642,7 @@ if not filtered_data_test_final.empty:
         # Filter data for the current n_value
         data_mu = filtered_data_test_final[filtered_data_test_final['mu'] == mu_value]
 
-        plt.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=176, marker='^')
+        plt.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=220, marker='^')
 
 else:
     print("No data found in the filtered dataset.")
@@ -756,7 +756,7 @@ if not filtered_data_test_final.empty:
         # Filter data for the current n_value
         data_mu = filtered_data_test_final[filtered_data_test_final['mu'] == mu_value]
 
-        plt.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=176, marker='^')
+        plt.scatter(10** data_mu['alphaload'], 10**data_mu['outputAmplification'], label=f'n = {mu_value}', color=colors[i],edgecolor='black', alpha=1, linewidth=1, s=220, marker='^')
 
 else:
     print("No data found in the filtered dataset.")
