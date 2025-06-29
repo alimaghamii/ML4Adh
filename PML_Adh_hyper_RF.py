@@ -83,10 +83,13 @@ while rf.n_estimators <= max_trees:
 
 # ─────────────────────────── plot & save curve ─────────────────────────────
 plt.figure()
-plt.plot(n_seq, train_mse, label="Train MSE")
-plt.plot(n_seq, val_mse,   label="Validation MSE")
-plt.xlabel("Number of Trees");  plt.ylabel("MSE")
-plt.title("Random Forest Learning Curve");  plt.legend();  plt.tight_layout()
+plt.plot(n_seq, np.sqrt(train_mse), label="Train RMSE")
+plt.plot(n_seq, np.sqrt(val_mse),   label="Validation RMSE")
+plt.xlabel("Number of Trees")
+plt.ylabel("RMSE")
+plt.title("Random Forest Learning Curve")
+plt.legend()
+plt.tight_layout()
 
 curve_path = os.path.join(
     save_dir_PARPML_6inputs, "random_forest_learning_curve.png")
