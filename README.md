@@ -1,5 +1,7 @@
 # Pull-off force prediction in viscoelastic adhesive Hertzian contact by physics augmented machine learning
 
+the readme is modified to check.
+
 ## Overview
 This repository contains machine learning models that integrate physics-based principles to enhance the prediction accuracy of pull-off force in viscoelastic adhesive Hertzian contact. By leveraging both **data-driven** and **physics-augmented ML** techniques, the approach provides improved generalization. The results are provided in a manuscript written by **Ali Maghami**, **Merten Stender**, and **Antonio Papangelo**.
 
