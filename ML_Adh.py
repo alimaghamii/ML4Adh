@@ -13,6 +13,7 @@ from cpsme.export_figure import export_figure
 # from cpsme.export_figure import export_figure
 import joblib
 import os
+import time
 
 # Here, we import details from utilities
 from utilities import latex_table_template
@@ -82,7 +83,11 @@ for model_name, model in models.items():
         r2_folds.append(r2_score(y_val_fold, y_val_pred))
 
     # Final evaluation on test data
+    start_time = time.perf_counter()
     model.fit(X_train, y_train)
+    end_time = time.perf_counter()
+    train_time = end_time - start_time
+
     y_test_pred = model.predict(X_test)
 
     mse_test = mean_squared_error(y_test, y_test_pred)
@@ -106,7 +111,10 @@ for model_name, model in models.items():
 
 
     num_param = get_trainable_parameters(model_name, model, X_train)
-    append_model_to_file(model_name,num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test,save_dir_RPML_5inputs, 'RPML_model_comparison_table.txt')
+    append_model_to_file(
+        model_name, num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test,
+        save_dir_RPML_5inputs, 'RPML_model_comparison_table.txt', train_time=train_time
+    )
 
 # Save each trained model
 for model_name, model in models.items():

@@ -13,6 +13,7 @@ from cpsme.export_figure import export_figure
 # from cpsme.export_figure import export_figure
 import joblib
 import os
+import time
 
 # Here, we import details from utilities
 from utilities import latex_table_template
@@ -70,6 +71,7 @@ for model_name, model in models.items():
     for train_index, val_index in kf.split(X):
         X_train_fold, X_val_fold = X.iloc[train_index], X.iloc[val_index]
         y_train_fold, y_val_fold = y.iloc[train_index], y.iloc[val_index]
+        
 
         # Train the model
         model.fit(X_train_fold, y_train_fold)
@@ -81,8 +83,12 @@ for model_name, model in models.items():
         mse_folds.append(mean_squared_error(y_val_fold, y_val_pred))
         r2_folds.append(r2_score(y_val_fold, y_val_pred))
 
+    start_time = time.perf_counter()
     # Final evaluation on test data
     model.fit(X_train, y_train)
+    end_time = time.perf_counter()
+    train_time = end_time - start_time
+
     y_test_pred = model.predict(X_test)
 
     mse_test = mean_squared_error(y_test, y_test_pred)
@@ -106,7 +112,7 @@ for model_name, model in models.items():
 
 
     num_param = get_trainable_parameters(model_name, model, X_train)
-    append_model_to_file(model_name,num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test,save_dir_RPML_5inputs_W, 'RPML_model_comparison_table.txt')
+    append_model_to_file(model_name,num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test,save_dir_RPML_5inputs_W, 'RPML_model_comparison_table.txt', train_time=train_time)
 
 # Save each trained model
 for model_name, model in models.items():

@@ -238,8 +238,8 @@ def find_closest(runload_value, runload_column):
         idx = (np.abs(runload_column - runload_value)).idxmin()
         return idx
 
-    ###########################################################################################
-def append_model_to_file(model_name,num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test,
+###########################################################################################
+def append_model_to_file2(model_name,num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test,
                          save_dir="save_dir_PARPML_6inputs", file_name="latex_table.txt"):
     # Ensure the directory exists
     os.makedirs(save_dir, exist_ok=True)
@@ -266,6 +266,25 @@ def append_model_to_file(model_name,num_param, mse_avg, mse_var, r2_avg, r2_var,
 
     print(f"Added: {latex_line}")
     print(f"Saved to: {file_path}")
+
+    
+def append_model_to_file(model_name, num_param, mse_avg, mse_var, r2_avg, r2_var, mse_test, r2_test, save_dir, filename, train_time=None):
+    file_path = os.path.join(save_dir, filename)
+    header = "Model & Num Param & MSE (avg) & MSE (var) & R2 (avg) & R2 (var) & MSE (test) & R2 (test) & Train Time (s) \\\\"
+    row = f"{model_name} & {num_param} & ${mse_avg:.4f} \\pm {mse_var:.4f}$ & ${r2_avg:.4f} \\pm {r2_var:.4f}$ & {mse_test:.4f} & {r2_test:.4f} & {train_time:.4f} \\\\"
+
+    # If file does not exist, write header
+    if not os.path.exists(file_path):
+        with open(file_path, "w") as f:
+            f.write(header + "\n")
+    # Append row
+    with open(file_path, "a") as f:
+        f.write(row + "\n")
+
+    # Print results to terminal
+    print(header)
+    print(row)
+
 
 
 def get_trainable_parameters(model_name, model, X_train=None):
